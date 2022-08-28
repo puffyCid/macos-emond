@@ -1,11 +1,14 @@
 use log::error;
 use plist::{Dictionary, Value};
 
-use crate::{emond::EmondData, error::EmondError, util};
+use crate::{emond::EmondData, error::EmondError, size::get_file_size, util};
 
 /// Parse the Emond Config PLIST to get any additional Emond Rules directories besides the default path
 pub fn get_emond_rules_paths() -> Result<Vec<String>, EmondError> {
     let emond_plist_path: String = String::from("/etc/emond.d/emond.plist");
+    if !get_file_size(&emond_plist_path) {
+        return Ok(Vec::new());
+    }
     let emond_plist_result: Result<Dictionary, plist::Error> = plist::from_file(emond_plist_path);
 
     let emond_plist = match emond_plist_result {

@@ -11,6 +11,7 @@ use serde::Serialize;
 use crate::{
     actions::{self, command, send_email, send_notification},
     error::EmondError,
+    size::get_file_size,
     util::{get_boolean_value, get_dictionary_values, get_string_value},
 };
 
@@ -67,6 +68,9 @@ impl EmondData {
             };
 
             let emond_rule_path = entry.path().display().to_string();
+            if !get_file_size(&emond_rule_path) {
+                continue;
+            }
 
             let emond_data_results = EmondData::parse_emond_data(&emond_rule_path);
             let mut emond_data = match emond_data_results {
